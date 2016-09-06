@@ -34,8 +34,10 @@ class tpm (
 
     if $enable_pkcs_interface {
       # TODO
-      # one of these is certainly the one you need
-      # package { 'tpm-quote-tools': ensure => 'present' }
+      ##################################################################################################################
+      # Here's a nice doc on how to set up the pkcs #11 interface
+      # https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Security_Guide/sec-Encryption.html
+      ##################################################################################################################
       # package { 'opencryptoki': ensure => latest }
       # package { 'opencryptoki-tpmtok': ensure => latest }
       package { 'tpm-tools-pkcs11': ensure => latest }
