@@ -4,15 +4,6 @@ describe 'tpm::ima' do
   on_supported_os.each do |os, os_facts|
     context "on #{os}" do
 
-      let(:params) {{
-        :mount_dir     => '/sys/kernel/security',
-        :ima_audit     => false,
-        :ima_template  => 'ima-ng',
-        :ima_hash      => 'sha256',
-        :ima_tcb       => true,
-        :manage_policy => false,
-      }}
-
       let(:facts) do
         os_facts.merge({
           :cmdline      => { 'ima' => 'on' },
@@ -22,6 +13,7 @@ describe 'tpm::ima' do
 
       context 'with default params' do
         it { is_expected.to compile.with_all_deps }
+        it { is_expected.to create_class('tpm') }
         it { is_expected.to create_class('tpm::ima') }
         it { is_expected.not_to contain_reboot_notify('ima_log') }
         # it { is_expected.not_to contain_class('::tpm::ima::policy') }
@@ -43,9 +35,7 @@ describe 'tpm::ima' do
 
       context 'should tell the user to reboot when the ima log is filling up' do
         let(:facts) do
-          os_facts.merge({
-            :ima_log_size => 50000002
-          })
+          os_facts.merge({ :ima_log_size => 50000002 })
         end
         let(:params) {{ :log_max_size => 50000000 }}
 

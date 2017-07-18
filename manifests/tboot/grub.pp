@@ -1,5 +1,7 @@
 # Configure grub
 class tpm::tboot::grub {
+  assert_private()
+
   case $facts['augeasprovider_grub_version'] {
     1:       { include 'tpm::tboot::grub::grub1' }
     2:       { include 'tpm::tboot::grub::grub2' }

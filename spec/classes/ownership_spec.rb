@@ -15,6 +15,7 @@ describe 'tpm::ownership' do
         }}
 
         it { is_expected.to compile.with_all_deps }
+        it { is_expected.to create_class('tpm') }
         it { is_expected.to create_class('tpm::ownership') }
         it { is_expected.to contain_tpm_ownership('tpm0').with({
           'ensure'         => 'present',

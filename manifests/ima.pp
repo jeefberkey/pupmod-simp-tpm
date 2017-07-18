@@ -31,16 +31,17 @@
 # @author Nick Markowski <namarkowski@keywcorp.com>
 # @author Trevor Vaughan <tvaughan@onyxpoint.com>
 #
-class tpm::ima (
-  Boolean              $enable        = true,
-  Boolean              $manage_policy = false,
-  Stdlib::AbsolutePath $mount_dir     = '/sys/kernel/security',
-  Boolean              $ima_audit     = true,
-  Tpm::Ima::Template   $ima_template  = 'ima-ng',
-  String               $ima_hash      = 'sha256',
-  Boolean              $ima_tcb       = true,
-  Integer              $log_max_size  = 30000000
-){
+class tpm::ima {
+  assert_private()
+
+  $enable        = $tpm::ima
+  $manage_policy = $tpm::manage_ima_policy
+  $mount_dir     = $tpm::mount_dir
+  $ima_audit     = $tpm::ima_audit
+  $ima_template  = $tpm::ima_template
+  $ima_hash      = $tpm::ima_hash
+  $ima_tcb       = $tpm::ima_tcb
+  $log_max_size  = $tpm::ima_log_max_size
 
   if $enable {
     if $facts['cmdline']['ima'] == 'on' {
@@ -57,23 +58,19 @@ class tpm::ima (
       }
     }
 
-    kernel_parameter { 'ima':
-      value    => 'on',
-      bootmode => 'normal'
-    }
-    kernel_parameter { 'ima_audit':
-      value    => $ima_audit,
-      bootmode => 'normal'
-    }
-    kernel_parameter { 'ima_template':
-      value    => $ima_template,
-      bootmode => 'normal'
-    }
-    kernel_parameter { 'ima_hash':
-      value    => $ima_hash,
-      bootmode => 'normal'
-    }
+    kernel_parameter {
+      default:
+        bootmode => 'normal';
 
+      'ima':
+        value => 'on';
+      'ima_audit':
+        value => $ima_audit;
+      'ima_template':
+        value => $ima_template;
+      'ima_hash':
+        value => $ima_hash;
+    }
     if $ima_tcb {
       kernel_parameter { 'ima_tcb':
         notify => Reboot_notify['ima_reboot']
@@ -97,9 +94,14 @@ class tpm::ima (
       ensure => 'absent',
       notify => Reboot_notify['ima_reboot']
     }
-    kernel_parameter { [ 'ima', 'ima_audit', 'ima_template', 'ima_hash' ]:
-      ensure   => 'absent',
-      bootmode => 'normal'
+    kernel_parameter {
+      default:
+        ensure   => 'absent',
+        bootmode => 'normal';
+      'ima':;
+      'ima_audit':;
+      'ima_template':;
+      'ima_hash':;
     }
   }
 

@@ -17,11 +17,12 @@
 #
 # @author Nick Miller <nick.miller@onyxpoint.com>
 #
-class tpm::ownership (
-  String           $owner_pass     = passgen( "${facts['fqdn']}_tpm0_owner_pass", { 'length' => 20 } ),
-  Optional[String] $srk_pass       = undef,
-  Boolean          $advanced_facts = false
-){
+class tpm::ownership {
+  assert_private()
+
+  $owner_pass     = $tpm::owner_pass
+  $srk_pass       = $tpm::srk_pass
+  $advanced_facts = $tpm::advanced_facts
 
   tpm_ownership { 'tpm0':
     ensure         => present,
